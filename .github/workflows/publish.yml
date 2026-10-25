@@ -1,11 +1,16 @@
 name: Publish a module
 
-# A <module>-<version> tag, pushed by cz bump, packs the module and adds it to
-# index.yaml. Archives and the index are assets of the one release "modules".
+# A <module>-<version> tag, pushed by cz bump or given to a manual run, packs the
+# module and adds it to index.yaml, both assets of the one release "modules".
 on:
   push:
     tags:
       - "*-*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The <module>-<version> tag to publish.
+        required: true
 
 permissions:
   contents: write
@@ -14,6 +19,9 @@ concurrency:
   group: publish-modules
   cancel-in-progress: false
 
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+
 jobs:
   publish:
     name: Pack, index and upload
@@ -21,11 +29,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TAG }}
 
       - name: Pack the module and index it
         id: suil
         uses: oberon-systems/droch-shuil/publish@v0.7.1
         with:
+          tag:       ${{ env.TAG }}
           index-url: ${{ github.server_url }}/${{ github.repository }}/releases/download/modules
 
       - name: Upload to the release
