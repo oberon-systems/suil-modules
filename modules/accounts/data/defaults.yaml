@@ -1,0 +1,15 @@
+---
+accounts:
+  users: {}
+
+  # The user operation replaces supplementary group membership when it is given
+  # a list, which silently drops any group added outside this module.
+  groups_append:  true
+
+  # Write /etc/sudoers.d/<name> for entries carrying a `sudo` key.
+  manage_sudo:    true
+
+  # true makes this module's key the only key on the account.
+  keys_exclusive: false
+
+  visudo:         /usr/sbin/visudo

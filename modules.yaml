@@ -1,5 +1,6 @@
 repos:
   - repo:    local
     modules:
+      - accounts
       - hostname
       - selinux
