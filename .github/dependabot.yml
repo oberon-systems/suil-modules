@@ -1,0 +1,43 @@
+---
+version: 2
+
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day:      monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "[build][pip]"
+    groups:
+      pip:
+        update-types: [minor, patch]
+    # wyld-cz requires commitizen <5; wyld-cz moves with it by hand.
+    ignore:
+      - dependency-name: commitizen
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: pre-commit
+    directory: /
+    schedule:
+      interval: weekly
+      day:      monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "[build][pre-commit]"
+    groups:
+      pre-commit:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day:      monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "[build][github-actions]"
+    groups:
+      github-actions:
+        update-types: [minor, patch]

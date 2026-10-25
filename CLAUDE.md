@@ -1,0 +1,32 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this is
+
+The public modules of suil. suil itself is `droch-shuil` on PyPI, source in
+`oberon-systems/droch-shuil`. This repository holds modules only; each one is
+released by a `<module>-<version>` tag.
+
+## Commands
+
+```shell
+make install    # .venv, requirements.txt, pre-commit hooks
+make shell      # subshell with the venv active and PRE_COMMIT_HOME set
+make lint       # pre-commit run --all-files
+```
+
+## Committing - STRICT
+
+1. Commit only through commitizen: `cz commit`. Never `git commit` and never a
+   hand-written message.
+2. Never write `Co-Authored-By`, generated-by or any other trailer.
+3. Never `--no-verify` or `SKIP=` past a hook.
+
+`cz check` enforces the `wyld_cz` schema `^\[(fix|feat|build|docs|refactor)\]\[[^\]]+\]: .+`.
+
+## Conventions
+
+- No real hosts, addresses, users or private repository names anywhere. Use
+  placeholders: alpha, beta, example.com, 192.0.2.x.
+- YAML in `data/` uses the aligned-colon layout (`key:     value`).

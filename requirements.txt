@@ -1,0 +1,5 @@
+commitizen==4.19.1
+droch-shuil==0.5.0
+pre-commit==4.6.2
+pytest==9.1.1
+wyld-cz==0.4.1

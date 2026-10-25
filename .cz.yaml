@@ -1,0 +1,11 @@
+commitizen:
+  allowed_prefixes:
+    - Merge
+    - Revert
+    - Pull request
+    - fixup!
+    - squash!
+    - amend!
+    - 'bump:'
+  major_version_zero: true
+  name: wyld_cz

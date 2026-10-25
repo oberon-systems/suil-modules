@@ -1,0 +1,24 @@
+# Agents
+.claude/
+.gemini/
+CLAUDE.local.md
+GEMINI.md
+.mcp.json
+
+# Python
+.venv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+
+# pre-commit, kept in-tree by PRE_COMMIT_HOME
+.pre-commit
+
+# suil workspace state
+.env
+facts/
+.runs/

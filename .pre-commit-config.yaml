@@ -1,0 +1,79 @@
+# commit-msg hook scripts are only written by `pre-commit install` when it is
+# asked for that type.
+default_install_hook_types: [pre-commit, commit-msg]
+
+# A hook that declares no stage runs in every installed one, so at commit-msg
+# it would lint .git/COMMIT_EDITMSG instead of the tree.
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-vcs-permalinks
+      - id: check-yaml
+        files: .*\.(yaml|yml)$
+        # Module data may carry !ENC[...] and the other suil tags.
+        args: [--unsafe]
+      - id: detect-aws-credentials
+        args: [--allow-missing-credentials]
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: forbid-new-submodules
+      - id: mixed-line-ending
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.6
+    hooks:
+      - id: forbid-crlf
+      - id: remove-crlf
+      - id: forbid-tabs
+        files: \.(py|sh|md|ya?ml)$
+      - id: remove-tabs
+        args: [--whitespaces-count, '2']
+        files: \.(py|sh|md|ya?ml)$
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.4.1
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.49.1
+    hooks:
+      - id: markdownlint
+        # Needs Node 22+, and without a pin pre-commit takes whichever node is first on PATH.
+        language_version: lts
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: forbid-binary
+      - id: require-ascii
+        exclude: \.md$
+      - id: shellcheck
+        args: [-e, SC2086]
+      # -i 4 overrides shfmt's tab indentation, which forbid-tabs rejects in *.sh.
+      - id: shfmt
+        args: [-w, -i, '4']
+
+  # `cz check` needs the wyld_cz provider .cz.yaml names, pinned in requirements.txt.
+  - repo: local
+    hooks:
+      - id: commitizen
+        name: Check the commit message
+        entry: .venv/bin/cz check --allow-abort --commit-msg-file
+        language: system
+        stages: [commit-msg]
+
+  - repo: meta
+    hooks:
+      - id: check-useless-excludes
