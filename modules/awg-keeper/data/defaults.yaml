@@ -1,0 +1,29 @@
+---
+# Bottom layer: the agent on loopback, as shipped. The token, the listener the
+# Panel reaches and the interfaces it may drive are site data.
+awg-keeper:
+  version: 0.5.3
+  # The packager's release field, which the rpm name repeats after the version.
+  release: 1
+  sha256:  ""
+
+  manage_service: true
+
+  bind: 127.0.0.1
+  port: 8081
+
+  allowed_subnets: []
+  interfaces:      []
+
+  awg_bin:      awg
+  awg_conf_dir: /etc/amnezia/amneziawg
+
+  ip_bin: ip
+
+  xray_bin:    xray
+  xray_api:    127.0.0.1:8085
+  xray_config: /usr/local/etc/xray/config.json
+
+  command_timeout: 10.0
+  log_level:       INFO
+  docs:            false

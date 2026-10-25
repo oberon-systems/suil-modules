@@ -3,6 +3,7 @@ repos:
     modules:
       - accounts
       - amneziawg
+      - awg-keeper
       - docker
       - hostname
       - nftables

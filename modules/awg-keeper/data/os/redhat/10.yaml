@@ -1,0 +1,4 @@
+---
+awg-keeper:
+  # nfpm names the rpm itself; {version} and {release} are filled in by the module.
+  artifact: awg-keeper-agent-{version}-{release}.x86_64.rpm

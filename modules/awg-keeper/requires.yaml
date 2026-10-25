@@ -1,0 +1,6 @@
+---
+# Not positional: the agent's unit mounts the amneziawg config directory and,
+# through the drop-in, xray's - systemd refuses to start it before both exist.
+requires:
+  - amneziawg
+  - xray
