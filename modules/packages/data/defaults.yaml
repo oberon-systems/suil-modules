@@ -1,0 +1,5 @@
+---
+# The package set itself is site data and lives in the OS layer, because a
+# package name is an OS fact: data/os/redhat/10.yaml.
+packages:
+  list: {}

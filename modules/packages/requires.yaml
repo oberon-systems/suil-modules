@@ -1,0 +1,5 @@
+---
+# Not positional: the package set is installed out of the repositories that
+# module declares, EPEL included.
+requires:
+  - repos
