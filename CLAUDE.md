@@ -13,6 +13,7 @@ released by a `<module>-<version>` tag.
 ```shell
 make install    # .venv, requirements.txt, pre-commit hooks
 make shell      # subshell with the venv active and PRE_COMMIT_HOME set
+make test       # pytest modules -q
 make lint       # pre-commit run --all-files
 make docs       # mkdocs serve on 127.0.0.1:8005; docs-build builds site/
 make module MODULE=<name>   # modules/<name>/.cz.yaml from cz-module.yaml

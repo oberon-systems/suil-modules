@@ -23,5 +23,5 @@ site/
 
 # suil workspace state
 .env
-facts/
-.runs/
+/facts/
+/.runs/

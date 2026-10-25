@@ -1,0 +1,7 @@
+---
+hostname:
+  manage:            true
+  # The images ship preserve_hostname: false and run update_hostname on every
+  # boot, so the drop-in is what makes the name survive a reboot.
+  manage_cloud_init: true
+  cloud_init_file:   /etc/cloud/cloud.cfg.d/99-hostname.cfg

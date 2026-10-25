@@ -79,3 +79,12 @@ repos:
   - repo: meta
     hooks:
       - id: check-useless-excludes
+
+  - repo: local
+    hooks:
+      - id: suil-validate
+        name: Validate modules.yaml and the modules it declares
+        entry: .venv/bin/suil validate
+        language: system
+        files: ^(modules\.yaml|modules/)
+        pass_filenames: false

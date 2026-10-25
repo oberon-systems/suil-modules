@@ -8,7 +8,7 @@ PIP     := $(VENV)/bin/pip
 export PRE_COMMIT_HOME := $(CURDIR)/.pre-commit
 
 .DEFAULT_GOAL := shell
-.PHONY: install shell lint docs docs-build module bump clean
+.PHONY: install shell test lint docs docs-build module bump clean
 
 
 install:
@@ -16,6 +16,10 @@ install:
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 	$(VENV)/bin/pre-commit install
+
+# Every module's tests. One module alone is `pytest modules/<name> -q`.
+test:
+	$(VENV)/bin/pytest modules -q
 
 lint:
 	$(VENV)/bin/pre-commit run --all-files
