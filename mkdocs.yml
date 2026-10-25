@@ -1,0 +1,27 @@
+# README.md and modules/*/README.md rendered with the droch-shuil theme;
+# .github/workflows/docs.yml publishes it to GitHub Pages.
+site_name: suil-modules
+site_url: https://oberon-systems.github.io/suil-modules/
+repo_url: https://github.com/oberon-systems/suil-modules
+edit_uri: blob/main/docs/
+
+docs_dir: docs
+site_dir: site
+strict: true
+
+theme:
+  name: readthedocs
+  custom_dir: docs/.theme
+  collapse_navigation: false
+  navigation_depth: 2
+  highlightjs: false
+
+extra_css:
+  - assets/fonts.css
+  - assets/suil.css
+
+extra_javascript:
+  - assets/suil.js
+
+hooks:
+  - docs/.theme/hooks.py

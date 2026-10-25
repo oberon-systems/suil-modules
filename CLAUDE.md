@@ -14,7 +14,14 @@ released by a `<module>-<version>` tag.
 make install    # .venv, requirements.txt, pre-commit hooks
 make shell      # subshell with the venv active and PRE_COMMIT_HOME set
 make lint       # pre-commit run --all-files
+make docs       # mkdocs serve on 127.0.0.1:8005; docs-build builds site/
+make module MODULE=<name>   # modules/<name>/.cz.yaml from cz-module.yaml
+make bump MODULE=<name>     # cz bump for one module: changelog and <name>-<version> tag
 ```
+
+A module is `modules/<name>/`, exactly as in a suil workspace; this
+repository is one, with every module in a `repo: local` entry of its
+`modules.yaml`.
 
 ## Committing - STRICT
 

@@ -56,7 +56,9 @@ repos:
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 3.0.0
     hooks:
+      # The docs fonts are vendored so the site never reaches a CDN.
       - id: forbid-binary
+        exclude: \.woff2$
       - id: require-ascii
         exclude: \.md$
       - id: shellcheck

@@ -18,6 +18,9 @@ __pycache__/
 # pre-commit, kept in-tree by PRE_COMMIT_HOME
 .pre-commit
 
+# MkDocs output
+site/
+
 # suil workspace state
 .env
 facts/

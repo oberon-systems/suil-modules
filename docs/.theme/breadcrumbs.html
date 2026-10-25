@@ -1,0 +1,10 @@
+{#- The path and the edit link above the page. #}
+<div class="suil-crumbs" role="navigation" aria-label="breadcrumbs navigation">
+  <span class="suil-path">
+    <a href="{{ nav.homepage.url|url }}">Docs</a>
+    {%- if page and not page.is_homepage %}<span class="suil-sep">/</span>{{ page.title }}{%- endif %}
+  </span>
+  {%- if page and page.edit_url %}
+  <a class="suil-edit" href="{{ page.edit_url }}">Edit on GitHub</a>
+  {%- endif %}
+</div>
