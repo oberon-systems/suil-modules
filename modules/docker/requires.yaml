@@ -1,0 +1,6 @@
+---
+# Not positional: docker-ce comes from the repository data/repos.yaml declares,
+# and the forward rules in data/nftables.yaml are rendered by nftables.
+requires:
+  - repos
+  - nftables

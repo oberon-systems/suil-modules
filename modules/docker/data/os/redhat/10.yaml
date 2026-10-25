@@ -1,0 +1,17 @@
+---
+docker:
+  package:         docker-ce
+  cli_package:     docker-ce-cli
+  compose_package: docker-compose-plugin
+  extra_packages:
+    - containerd.io
+    - docker-buildx-plugin
+    # docker-ce requires (iptables-nft or iptables); left to dnf, iptables-legacy can win.
+    - iptables-nft
+  # br_netfilter lives here on EL, and the module pins it to the running kernel.
+  modules_extra:     kernel-modules-extra
+  service:           docker
+  dockerd_binary:    /usr/bin/dockerd
+  config_file:       /etc/docker/daemon.json
+  sysctl_file:       /etc/sysctl.d/90-docker.conf
+  modules_load_file: /etc/modules-load.d/br_netfilter.conf

@@ -1,0 +1,23 @@
+# Managed by suil, module `docker`. Local edits are lost on the next run.
+[Unit]
+Description=Docker container %i
+Documentation=man:docker-run(1)
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+ConditionPathExists=/opt/%i
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5s
+TimeoutStartSec=0
+WorkingDirectory=/opt/%i
+
+# The instance's run.conf drop-in, rendered by the module, adds the pull, the
+# docker run itself and the stop; docker's own restart policy stays off.
+ExecStartPre=-/usr/bin/docker rm -f %i
+
+[Install]
+WantedBy=multi-user.target

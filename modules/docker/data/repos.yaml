@@ -1,0 +1,8 @@
+---
+repos:
+  list:
+    docker-ce-stable:
+      description: Docker CE Stable - $basearch
+      baseurl:     https://download.docker.com/linux/rhel/$releasever/$basearch/stable
+      gpgkey:      https://download.docker.com/linux/rhel/gpg
+      gpgcheck:    true

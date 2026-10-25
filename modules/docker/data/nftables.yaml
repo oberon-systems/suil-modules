@@ -1,0 +1,21 @@
+---
+# Port of puppet docker_distribution::nftables. No `oifname "docker0" accept` on
+# purpose: a published port stays closed until a layer opens it at order 120+.
+nftables:
+  direct:
+    docker_user_established:
+      rule_string: 'ct state established,related counter accept comment "DOCKER-USER: established"'
+      chain:       forward
+      order:       110
+    docker_user_egress_docker0:
+      rule_string: 'iifname "docker0" oifname != "docker0" counter accept comment "DOCKER-USER: docker0 egress"'
+      chain:       forward
+      order:       111
+    docker_user_egress_bridges:
+      rule_string: 'iifname "br-*" oifname != "br-*" counter accept comment "DOCKER-USER: user bridge egress"'
+      chain:       forward
+      order:       112
+    docker_user_bridge_interconn:
+      rule_string: 'iifname "br-*" oifname "br-*" counter accept comment "DOCKER-USER: bridge interconnect"'
+      chain:       forward
+      order:       113

@@ -1,0 +1,22 @@
+# Managed by suil, module `docker`. Local edits are lost on the next run.
+[Unit]
+Description=Docker compose stack %i
+Documentation=https://docs.docker.com/compose/
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+ConditionPathExists=/opt/%i/docker-compose.yml
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStartSec=0
+WorkingDirectory=/opt/%i
+
+ExecStart=/usr/bin/docker compose up -d --remove-orphans
+# A reload converges only what changed; a restart is down, then up.
+ExecReload=/usr/bin/docker compose up -d --remove-orphans
+ExecStop=/usr/bin/docker compose down
+
+[Install]
+WantedBy=multi-user.target

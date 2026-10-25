@@ -1,0 +1,7 @@
+# Managed by suil, module `docker`, for {{ node }}. Local edits are lost.
+[Service]
+{% if pull %}
+ExecStartPre=-{{ pull }}
+{% endif %}
+ExecStart={{ start }}
+ExecStop={{ stop }}

@@ -1,0 +1,29 @@
+---
+# Bottom layer: the engine and the compose plugin with nothing running. Every
+# container and stack is site data.
+docker:
+  ensure:         present
+  manage_service: true
+
+  # A changed daemon.json reloads docker; a restart takes every instance down with it.
+  restart: false
+
+  # The container and compose directories belong to the module.
+  purge: true
+
+  # Rendered whole into daemon.json. userland-proxy off is what needs br_netfilter.
+  config:
+    firewall-backend: nftables
+    live-restore:     true
+    log-driver:       json-file
+    log-opts:
+      max-size: 50m
+      max-file: "5"
+    storage-driver:   overlay2
+    userland-proxy:   false
+
+  containers: {}
+
+  compose:
+    ensure: present
+    stacks: {}
