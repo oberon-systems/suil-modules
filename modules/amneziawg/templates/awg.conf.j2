@@ -1,0 +1,31 @@
+# Managed by suil, module `amneziawg`, interface {{ name }} on {{ node }}.
+# Local edits are lost on the next run.
+[Interface]
+Address = {{ interface.address }}
+ListenPort = {{ interface.listen_port }}
+PrivateKey = {{ interface.private_key }}
+{% if interface.mtu is not none %}
+MTU = {{ interface.mtu }}
+{% endif %}
+{% if interface.fwmark is not none %}
+FwMark = {{ interface.fwmark }}
+{% endif %}
+{% for key, value in obfuscation | dictsort %}
+{{ key }} = {{ value }}
+{% endfor %}
+{% for peer, spec in interface.peers | dictsort %}
+
+# {{ peer }}
+[Peer]
+PublicKey = {{ spec.public_key }}
+AllowedIPs = {{ spec.allowed_ips | join(', ') }}
+{% if spec.endpoint is not none %}
+Endpoint = {{ spec.endpoint }}
+{% endif %}
+{% if spec.preshared_key is not none %}
+PresharedKey = {{ spec.preshared_key }}
+{% endif %}
+{% if spec.keepalive is not none %}
+PersistentKeepalive = {{ spec.keepalive }}
+{% endif %}
+{% endfor %}

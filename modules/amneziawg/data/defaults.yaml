@@ -1,0 +1,17 @@
+---
+# Bottom layer: no interface and no obfuscation. Both are site data - an empty
+# profile is plain WireGuard, which is exactly what DPI already recognises.
+amneziawg:
+  manage_service:    true
+  manage_ip_forward: true
+  install_packages:  true
+
+  config_dir:  /etc/amnezia/amneziawg
+  awg_binary:  /usr/bin/awg
+  unit_prefix: awg-quick
+  sysctl_file: /etc/sysctl.d/90-amneziawg.conf
+  unit_dir:    /etc/systemd/system
+  ip_binary:   /usr/sbin/ip
+
+  obfuscation: {}
+  interfaces:  {}

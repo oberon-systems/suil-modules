@@ -1,0 +1,5 @@
+---
+# Not positional: amneziawg-tools and amneziawg-go come from a repository
+# declared through the repos module.
+requires:
+  - repos
