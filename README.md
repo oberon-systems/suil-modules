@@ -6,18 +6,19 @@ on its own, by a `<module>-<version>` tag.
 
 ## Use
 
-Declare the modules in the `modules.yaml` of a suil workspace, pinned to a tag:
+Declare the modules in the `modules.yaml` of a suil workspace, each pinned
+to its version:
 
 ```yaml
 repos:
-  - repo:    https://github.com/oberon-systems/suil-modules
-    version: <module>-<version>
+  - repo:    https://github.com/oberon-systems/suil-modules/releases/download/modules
     modules:
-      - <module>
+      <module>: <version>
 ```
 
-Then `suil install` clones them, and `suil autoupdate` moves `version` to the
-newest tag.
+The URL is the release `modules` of this repository: it holds one archive
+per module version and `index.yaml`. `suil install` downloads the modules
+into `modules/`, and `suil autoupdate` moves each to its newest version.
 
 ## Development
 
@@ -39,6 +40,27 @@ Every module has its own `modules/<name>/.cz.yaml`, written from
 under it, writes its changelog and tags `<name>-<version>`; a new module
 starts at `0.0.0`, so its first bump is `0.1.0`. A pushed tag is the
 release.
+
+### Publishing
+
+A pushed tag runs `.github/workflows/publish.yml`: the droch-shuil action
+`publish` packs the module and adds it to the live `index.yaml`, and
+`softprops/action-gh-release` uploads both to the release `modules`.
+
+Without GitHub Actions, by hand or on any other CI, the same release is four
+steps on a checkout at the tag:
+
+```bash
+pip install "$(grep '^droch-shuil==' requirements.txt)"
+suil pack <module>-<version> dist/
+suil index dist/ --merge https://github.com/oberon-systems/suil-modules/releases/download/modules
+gh release upload modules dist/* --clobber
+```
+
+The last step is any upload that adds the archive to the release `modules`
+and replaces `index.yaml` there; never run two publishes at once. See
+[Publishing](https://oberon-systems.github.io/droch-shuil/05-manifest/#publishing)
+in the droch-shuil documentation.
 
 The documentation is the README of the repository and of every module,
 published to GitHub Pages on every push to `main` that changes one of them.
