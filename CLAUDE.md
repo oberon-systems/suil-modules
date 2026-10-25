@@ -23,6 +23,14 @@ A module is released by `cz bump` run in `modules/<name>`: its own
 `.cz.yaml`, its own `CHANGELOG.md` from its commits only, tag
 `<name>-<version>`.
 
+A pushed tag runs `.github/workflows/publish.yml`: the droch-shuil action
+`publish` packs the module and merges it into `index.yaml`, and both are
+uploaded to the release `modules`, the source workspaces install from. An
+existing tag is published again with
+`gh workflow run publish.yml --ref main -f tag=<name>-<version>`. By hand or
+on another CI: `suil pack <tag> dist/`, `suil index dist/ --merge <source>`,
+then upload `dist/` to the release; see `docs/05-manifest.md` in droch-shuil.
+
 A module is `modules/<name>/`, exactly as in a suil workspace; this
 repository is one, with every module in a `repo: local` entry of its
 `modules.yaml`.
