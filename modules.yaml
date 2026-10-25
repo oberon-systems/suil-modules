@@ -6,3 +6,4 @@ repos:
       - nftables
       - repos
       - selinux
+      - unbound

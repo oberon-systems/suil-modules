@@ -1,0 +1,44 @@
+---
+# Bottom layer: a caching resolver on loopback and nothing else. Everything that
+# makes it answer other machines is site data, not a default.
+unbound:
+  manage_service:   true
+  install_packages: true
+
+  config_file: /etc/unbound/unbound.conf
+  verbosity:   1
+
+  listen_addresses:
+    - 127.0.0.1
+    - ::1
+
+  access_control:
+    - 127.0.0.0/8 allow
+    - ::1/128 allow
+
+  # A tunnel interface routinely comes up later than the daemon, and binding an
+  # address that is not there yet is a start failure.
+  ip_freebind: true
+
+  # Empty on purpose. EL builds unbound with a compiled-in chroot, and a
+  # chrooted daemon never reaches the /run/systemd/notify its unit waits on.
+  chroot: ""
+
+  msg_cache_size:   2m
+  rrset_cache_size: 4m
+
+  forward_zones: []
+  local_zones:   []
+
+  host_address: ""
+
+  # The module takes /etc/resolv.conf away from NetworkManager, so it stays off
+  # until a site asks for it.
+  manage_resolv_conf: false
+  resolv_conf:        /etc/resolv.conf
+
+  # Empty, and that is not an oversight twice over: which resolver a host falls
+  # back to is site policy, and a non-empty default would CONCATENATE with the
+  # site list rather than be replaced by it.
+  resolv_nameservers: []
+  resolv_options:     []

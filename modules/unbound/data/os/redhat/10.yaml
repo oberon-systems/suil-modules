@@ -1,0 +1,8 @@
+---
+unbound:
+  package:          unbound
+  service:          unbound
+  checkconf_binary: /usr/sbin/unbound-checkconf
+  # The packaged daemon drops privileges to this account, and the file is 0640.
+  config_group:     unbound
+  nm_dropin:        /etc/NetworkManager/conf.d/90-dns-none.conf

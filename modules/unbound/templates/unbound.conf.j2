@@ -1,0 +1,32 @@
+# Managed by suil, module `unbound`, for {{ suil.node }}.
+# Local edits are lost on the next run.
+server:
+    verbosity: {{ verbosity }}
+    ip-freebind: {{ 'yes' if ip_freebind else 'no' }}
+    chroot: "{{ chroot }}"
+
+{% for address in listen_addresses %}
+    interface: {{ address }}
+{% endfor %}
+
+{% for entry in access_control %}
+    access-control: {{ entry }}
+{% endfor %}
+
+    msg-cache-size:   {{ msg_cache_size }}
+    rrset-cache-size: {{ rrset_cache_size }}
+
+{% for zone in local_zones %}
+    local-zone: "{{ zone.name }}" {{ zone.type }}
+{% for record in zone.data %}
+    local-data: "{{ record }}"
+{% endfor %}
+{% endfor %}
+
+{% for zone in forward_zones %}
+forward-zone:
+    name: "{{ zone.name }}"
+{% for address in zone.forward_addr %}
+    forward-addr: {{ address }}
+{% endfor %}
+{% endfor %}

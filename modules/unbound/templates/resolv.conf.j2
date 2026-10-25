@@ -1,0 +1,8 @@
+# Managed by suil, module `unbound`, for {{ suil.node }}.
+# Local edits are lost on the next run.
+{% for nameserver in resolv_nameservers %}
+nameserver {{ nameserver }}
+{% endfor %}
+{% if resolv_options %}
+options {{ resolv_options | join(' ') }}
+{% endif %}
