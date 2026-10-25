@@ -1,0 +1,38 @@
+name: Publish a module
+
+# A <module>-<version> tag, pushed by cz bump, packs the module and adds it to
+# index.yaml. Archives and the index are assets of the one release "modules".
+on:
+  push:
+    tags:
+      - "*-*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-modules
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Pack, index and upload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Pack the module and index it
+        id: suil
+        uses: oberon-systems/droch-shuil/publish@v0.7.1
+        with:
+          index-url: ${{ github.server_url }}/${{ github.repository }}/releases/download/modules
+
+      - name: Upload to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: modules
+          name: Modules
+          body: Module archives and index.yaml, the source suil installs from.
+          make_latest: false
+          files: ${{ steps.suil.outputs.dir }}/*
