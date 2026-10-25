@@ -3,5 +3,6 @@ repos:
     modules:
       - accounts
       - hostname
+      - nftables
       - repos
       - selinux

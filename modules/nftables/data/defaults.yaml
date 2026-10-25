@@ -1,0 +1,89 @@
+---
+# The data model is the one from the puppet module of the same name: a table
+# skeleton with an order window per table, and rules that render inside that
+# window. `order` is relative to the table's `min_order`.
+nftables:
+  rules_file:      /etc/nftables/suil.nft
+  apply_script:    /usr/local/sbin/nftables-apply.sh
+  resolve_script:  /usr/local/sbin/nftables-resolve.sh
+  state_dir:       /var/lib/nftables
+  unit:            nftables-suil
+  completion_dir:  /usr/share/bash-completion/completions
+
+  manage_service:      true
+  disable_conflicting: true
+
+  # A source given as a DNS name becomes a set that a timer on the host keeps in
+  # step with the record, so a changed address needs no run of this module.
+  resolve_dns:      true
+  resolve_interval: 5min
+
+  tables:
+    filter:
+      family:    inet
+      min_order: 1
+      max_order: 999
+      chains:
+        input:   {type: filter, hook: input,   priority: 0, policy: drop}
+        forward: {type: filter, hook: forward, priority: 0, policy: drop}
+        output:  {type: filter, hook: output,  priority: 0, policy: accept}
+    nat:
+      family:    inet
+      min_order: 1000
+      max_order: 1999
+      chains:
+        prerouting:  {type: nat, hook: prerouting,  priority: -100}
+        postrouting: {type: nat, hook: postrouting, priority: 100}
+    # nft knows three chain types - filter, nat and route. `mangle` is not one;
+    # the equivalent is filter, and route for the output hook.
+    mangle:
+      family:    inet
+      min_order: 2000
+      max_order: 2999
+      chains:
+        prerouting:  {type: filter, hook: prerouting,  priority: -150}
+        input:       {type: filter, hook: input,       priority: -150}
+        forward:     {type: filter, hook: forward,     priority: -150}
+        output:      {type: route,  hook: output,      priority: -150}
+        postrouting: {type: filter, hook: postrouting, priority: -150}
+
+  # The baseline no layer may drop. This was `vars` in the ansible role, which
+  # host data could not reach; here it is the bottom layer like everything else,
+  # and code/config.py is what refuses a run that lost any of it.
+  baseline:
+    established:
+      rule_string: 'ct state established,related counter accept'
+      chain:       input
+      order:       100
+    loopback:
+      rule_string: 'iif lo counter accept'
+      chain:       input
+      order:       101
+    # Neighbour discovery is ICMPv6: dropping it breaks IPv6 outright, so this
+    # one is not scoped to a source the way icmp is in the site layer.
+    icmpv6:
+      rule_string: 'meta l4proto ipv6-icmp counter accept comment "icmpv6"'
+      chain:       input
+      order:       103
+    dhcp_client:
+      rule_string: 'udp sport 67 udp dport 68 counter accept comment "dhcp client"'
+      chain:       input
+      order:       104
+    dhcpv6_client:
+      rule_string: 'udp sport 547 udp dport 546 counter accept comment "dhcpv6 client"'
+      chain:       input
+      order:       105
+    input_drop:
+      rule_string: 'counter drop'
+      chain:       input
+      order:       990
+    forward_drop:
+      rule_string: 'counter drop'
+      chain:       forward
+      order:       991
+
+  chains: []
+  sets:   {}
+  direct: {}
+  rules:  {}
+  nat:    {}

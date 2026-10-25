@@ -1,0 +1,24 @@
+[Unit]
+Description=Apply the suil-managed nftables ruleset
+Documentation=man:nft(8)
+# a firewall has to be up before the network is
+Wants=network-pre.target
+Before=network-pre.target
+After=local-fs.target
+ConditionPathExists={{ rules_file }}
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# same code path as a run of this module: the script checks the ruleset with
+# 'nft -c' before committing anything and rolls back if the commit is rejected
+ExecStart={{ apply_script }} {{ rules_file }}
+ExecReload={{ apply_script }} {{ rules_file }}
+{% if resolve_dns %}
+# the DNS backed sets are rendered empty, so they are filled here rather than
+# only at the first tick of the timer
+ExecStartPost=-{{ resolve_script }} {{ rules_file }}
+{% endif %}
+
+[Install]
+WantedBy=multi-user.target

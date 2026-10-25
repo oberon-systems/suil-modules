@@ -1,0 +1,12 @@
+[Unit]
+Description=Refresh the DNS backed nftables sets every {{ resolve_interval }}
+Documentation=man:nft(8)
+
+[Timer]
+OnBootSec={{ resolve_interval }}
+OnUnitActiveSec={{ resolve_interval }}
+# the sets of every host would otherwise be refreshed at the same second
+RandomizedDelaySec=30
+
+[Install]
+WantedBy=timers.target

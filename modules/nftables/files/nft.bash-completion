@@ -1,0 +1,126 @@
+# bash completion for nft(8), deployed by the 'nftables' role.
+#
+# Options may appear anywhere on the command line, so positional arguments are
+# collected by walking the words rather than by indexing COMP_CWORD.
+# Every call into nft is stderr-silenced: completion must stay quiet when nft
+# cannot reach netlink (non-root), and must never print into the typed line.
+
+_nft_run() {
+    nft --terse "$@" 2>/dev/null
+}
+
+_nft_tables() {
+    # $1 - family, optional
+    _nft_run list tables ${1:+"$1"} | awk '$1 == "table" { print $3 }'
+}
+
+_nft_chains() {
+    # $1 - family (may be empty), $2 - table
+    _nft_run list table ${1:+"$1"} "$2" | awk '$1 == "chain" { print $2 }'
+}
+
+_nft_sets() {
+    # $1 - family (may be empty), $2 - table
+    _nft_run list table ${1:+"$1"} "$2" | awk '$1 == "set" || $1 == "map" { print $2 }'
+}
+
+_nft() {
+    local cur prev words cword
+    if declare -F _init_completion >/dev/null 2>&1; then
+        _init_completion -n : || return
+    else
+        COMPREPLY=()
+        cur=${COMP_WORDS[COMP_CWORD]}
+        prev=${COMP_WORDS[COMP_CWORD-1]}
+        words=("${COMP_WORDS[@]}")
+        cword=$COMP_CWORD
+    fi
+
+    local families='ip ip6 inet arp bridge netdev'
+    local commands='add create insert delete get list reset flush rename replace describe import export monitor'
+    local objects='table chain rule set map element flowtable counter quota limit secmark synproxy'
+    local opts='-h --help -v --version -c --check -f --file -i --interactive
+                -j --json -n --numeric -s --stateless -t --terse -a --handle
+                -e --echo -I --includepath -N --reversedns --debug'
+
+    case $prev in
+        -f|--file|-I|--includepath)
+            _filedir
+            return
+            ;;
+    esac
+
+    if [[ $cur == -* ]]; then
+        COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+        return
+    fi
+
+    local -a pos=()
+    local i
+    for ((i = 1; i < cword; i++)); do
+        case ${words[i]} in
+            -f|--file|-I|--includepath) ((i++)) ;;
+            -*) ;;
+            *) pos+=("${words[i]}") ;;
+        esac
+    done
+
+    if ((${#pos[@]} == 0)); then
+        COMPREPLY=($(compgen -W "$commands" -- "$cur"))
+        return
+    fi
+
+    local cmd=${pos[0]}
+    local objs
+    case $cmd in
+        list)     objs="$objects ruleset tables chains sets maps counters quotas flowtables" ;;
+        flush)    objs='table chain set map ruleset' ;;
+        reset)    objs='rule rules set map element counter counters quota quotas' ;;
+        describe) objs='' ;;
+        *)        objs="$objects" ;;
+    esac
+
+    if ((${#pos[@]} == 1)); then
+        COMPREPLY=($(compgen -W "$objs" -- "$cur"))
+        return
+    fi
+
+    local obj=${pos[1]}
+    # these take no table/chain argument
+    case $obj in
+        ruleset|tables|chains|sets|maps|counters|quotas|flowtables)
+            COMPREPLY=($(compgen -W "$families" -- "$cur"))
+            return
+            ;;
+    esac
+
+    # the family is optional in nft syntax, so work out whether it was given
+    local fam='' tbl=''
+    if [[ " $families " == *" ${pos[2]-} "* ]]; then
+        fam=${pos[2]-}
+        tbl=${pos[3]-}
+    else
+        tbl=${pos[2]-}
+    fi
+
+    if [[ -z $fam && -z $tbl ]]; then
+        COMPREPLY=($(compgen -W "$families $(_nft_tables)" -- "$cur"))
+        return
+    fi
+
+    if [[ -z $tbl ]]; then
+        COMPREPLY=($(compgen -W "$(_nft_tables "$fam")" -- "$cur"))
+        return
+    fi
+
+    case $obj in
+        chain|rule)
+            COMPREPLY=($(compgen -W "$(_nft_chains "$fam" "$tbl")" -- "$cur"))
+            ;;
+        set|map|element)
+            COMPREPLY=($(compgen -W "$(_nft_sets "$fam" "$tbl")" -- "$cur"))
+            ;;
+    esac
+}
+
+complete -F _nft nft

@@ -1,0 +1,10 @@
+[Unit]
+Description=Refresh the DNS backed nftables sets
+Documentation=man:nft(8)
+After={{ unit }}.service
+Requires={{ unit }}.service
+ConditionPathExists={{ rules_file }}
+
+[Service]
+Type=oneshot
+ExecStart={{ resolve_script }} {{ rules_file }}

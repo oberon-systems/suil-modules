@@ -1,0 +1,10 @@
+---
+nftables:
+  service:    nftables
+  nft_binary: /usr/sbin/nft
+  # firewalld is in @core, so a Rocky install carries it whether anything asked
+  # for it or not, and it programs its own tables in the same inet family.
+  conflicting_services:
+    - firewalld
+    - iptables
+    - ip6tables
