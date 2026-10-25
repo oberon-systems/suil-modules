@@ -8,7 +8,7 @@ PIP     := $(VENV)/bin/pip
 export PRE_COMMIT_HOME := $(CURDIR)/.pre-commit
 
 .DEFAULT_GOAL := shell
-.PHONY: install shell test lint docs docs-build module bump clean
+.PHONY: install shell test lint docs docs-build module clean
 
 
 install:
@@ -30,16 +30,12 @@ docs:
 docs-build:
 	$(VENV)/bin/mkdocs build
 
-# modules/<name>/.cz.yaml from cz-module.yaml; the first tag, <name>-0.1.0, is set by hand.
+# modules/<name>/.cz.yaml from cz-module.yaml, at 0.0.0 until the first bump.
 module:
 	@test -n "$(MODULE)" || { echo 'usage: make module MODULE=<name>'; exit 1; }
 	@test -d modules/$(MODULE) || { echo 'modules/$(MODULE) does not exist'; exit 1; }
 	@test ! -e modules/$(MODULE)/.cz.yaml || { echo 'modules/$(MODULE)/.cz.yaml exists'; exit 1; }
 	sed 's/MODULE/$(MODULE)/g' cz-module.yaml | sed '1,2d' > modules/$(MODULE)/.cz.yaml
-
-bump:
-	@test -n "$(MODULE)" || { echo 'usage: make bump MODULE=<name>'; exit 1; }
-	$(VENV)/bin/cz --config modules/$(MODULE)/.cz.yaml bump
 
 clean:
 	rm -rf $(VENV) .pre-commit site

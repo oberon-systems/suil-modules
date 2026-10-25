@@ -9,7 +9,7 @@ commitizen:
   - amend!
   - 'bump:'
   bump_message: 'bump: hostname $current_version -> $new_version'
-  changelog_file: modules/hostname/CHANGELOG.md
+  changelog_file: CHANGELOG.md
   changelog_paths:
   - modules/hostname
   ignored_tag_formats:
@@ -18,6 +18,6 @@ commitizen:
   name: wyld_cz
   tag_format: hostname-$version
   update_changelog_on_bump: true
-  version: 0.1.0
+  version: 0.0.0
   version_provider: commitizen
   version_scheme: semver

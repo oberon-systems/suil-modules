@@ -35,10 +35,10 @@ and the pre-commit hooks. Commits go through commitizen: `cz commit`.
 
 Every module has its own `modules/<name>/.cz.yaml`, written from
 `cz-module.yaml` by `make module MODULE=<name>`, and its own
-`CHANGELOG.md`. A new module starts at `0.1.0`, tagged `<name>-0.1.0` by hand
-on the commit that brings it in. After that `make bump MODULE=<name>` counts
-only the commits under `modules/<name>/`, writes the changelog and tags the
-next version. A pushed tag is the release.
+`CHANGELOG.md`. `cz bump`, run in `modules/<name>`, counts only the commits
+under it, writes its changelog and tags `<name>-<version>`; a new module
+starts at `0.0.0`, so its first bump is `0.1.0`. A pushed tag is the
+release.
 
 The documentation is the README of the repository and of every module,
 published to GitHub Pages on every push to `main` that changes one of them.
