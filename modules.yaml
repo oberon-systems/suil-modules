@@ -2,3 +2,4 @@ repos:
   - repo:    local
     modules:
       - hostname
+      - selinux

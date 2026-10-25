@@ -1,0 +1,9 @@
+---
+
+selinux:
+  manage: true
+
+  # What the distribution ships; a host that runs nothing written against a
+  # policy sets permissive or disabled in its own data.
+  mode:   enforcing
+  policy: targeted
