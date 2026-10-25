@@ -1,0 +1,63 @@
+---
+# Bottom layer: the api inbound and no traffic inbound. Every inbound that carries
+# clients is site data, and so is the Reality key.
+xray:
+  version: v26.3.27
+  # Published beside the asset as Xray-linux-64.zip.dgst; empty skips the check.
+  sha256:  ""
+
+  manage_service: true
+
+  log_level: warning
+
+  inbounds: []
+
+  reality_private_key: ""
+
+  # Everything but log and inbounds, which the module renders.
+  base_config:
+    api:
+      tag: api
+      services:
+        - HandlerService
+        - StatsService
+    stats: {}
+    policy:
+      levels:
+        "0":
+          statsUserUplink:   true
+          statsUserDownlink: true
+          statsUserOnline:   true
+    outbounds:
+      - protocol: freedom
+        tag:      direct
+      - protocol: blackhole
+        tag:      block
+    # A client leaves for the internet only: loopback holds the api that adds
+    # users, and the private ranges hold the host's own services. Spelled out,
+    # not geoip:private: the config is tested where no geoip.dat lies beside it.
+    routing:
+      rules:
+        - type:        field
+          inboundTag:  [api]
+          outboundTag: api
+        - type:        field
+          outboundTag: block
+          ip:
+            - 0.0.0.0/8
+            - 10.0.0.0/8
+            - 100.64.0.0/10
+            - 127.0.0.0/8
+            - 169.254.0.0/16
+            - 172.16.0.0/12
+            - 192.0.0.0/24
+            - 192.0.2.0/24
+            - 192.168.0.0/16
+            - 198.18.0.0/15
+            - 198.51.100.0/24
+            - 203.0.113.0/24
+            - 224.0.0.0/4
+            - 240.0.0.0/4
+            - ::1/128
+            - fc00::/7
+            - fe80::/10

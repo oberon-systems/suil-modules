@@ -7,3 +7,4 @@ repos:
       - repos
       - selinux
       - unbound
+      - xray
