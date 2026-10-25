@@ -1,0 +1,20 @@
+---
+# Bottom layer: the module manages nothing until a layer above declares a
+# repository. Which repositories a host has is site data, not a default.
+repos:
+  manage: true
+
+  # Off, and it stays off unless a layer says otherwise: purge removes every
+  # .repo file no layer declares, the distribution's own included.
+  purge: false
+
+  # Empty on purpose. The globs that protect the stock repositories are an OS
+  # fact and live in data/os/<family>/<release>.yaml - and a non-empty default
+  # would CONCATENATE with that list rather than be replaced by it.
+  purge_keep: []
+
+  keys:   {}
+  list:   {}
+  stores: {}
+
+  store_config_dir: /etc/rclone

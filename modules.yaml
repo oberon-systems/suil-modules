@@ -3,4 +3,5 @@ repos:
     modules:
       - accounts
       - hostname
+      - repos
       - selinux

@@ -1,0 +1,23 @@
+---
+commitizen:
+  allowed_prefixes:
+  - Merge
+  - Revert
+  - Pull request
+  - fixup!
+  - squash!
+  - amend!
+  - 'bump:'
+  bump_message: 'bump: repos $current_version -> $new_version'
+  changelog_file: CHANGELOG.md
+  changelog_paths:
+  - modules/repos
+  ignored_tag_formats:
+  - '*-$version'
+  major_version_zero: true
+  name: wyld_cz
+  tag_format: repos-$version
+  update_changelog_on_bump: true
+  version: 0.0.0
+  version_provider: commitizen
+  version_scheme: semver

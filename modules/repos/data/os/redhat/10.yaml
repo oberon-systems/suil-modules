@@ -1,0 +1,9 @@
+---
+repos:
+  repos_dir: /etc/yum.repos.d
+  gpg_dir:   /etc/pki/rpm-gpg
+
+  # The S3 front is rclone, and on EL it comes from EPEL - which is itself one
+  # of the repositories this module writes, so the order inside it matters.
+  rclone_package: rclone
+  rclone_binary:  /usr/bin/rclone
