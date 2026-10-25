@@ -6,5 +6,6 @@ repos:
       - nftables
       - repos
       - selinux
+      - ssh
       - unbound
       - xray

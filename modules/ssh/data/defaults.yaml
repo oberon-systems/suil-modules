@@ -1,0 +1,35 @@
+---
+# Flat names on purpose. A nested dict has to be restated in full to change one
+# key, and this module has too many keys for that to be safe.
+ssh:
+  port:                    22
+  listen_addresses:        []
+
+  permit_root_login:       "no"
+  password_authentication: "no"
+  pubkey_authentication:   "yes"
+  permit_empty_passwords:  "no"
+  use_pam:                 "yes"
+
+  x11_forwarding:          "no"
+  tcp_forwarding:          "yes"
+  log_level:               INFO
+  max_auth_tries:          4
+  login_grace_time:        30
+  client_alive_interval:   300
+  client_alive_count_max:  2
+
+  allow_users:             []
+  allow_groups:            []
+
+  # Pulled in at the END of the file, never the start - see README.md.
+  include:                 /etc/ssh/sshd_config.d/*.conf
+
+  accept_env:
+    - LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+    - LC_IDENTIFICATION LC_ALL LANGUAGE
+    - LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+    - XMODIFIERS
+
+  manage_service: true
+  lockout_check:  true

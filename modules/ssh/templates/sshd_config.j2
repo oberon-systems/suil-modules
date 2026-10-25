@@ -1,0 +1,55 @@
+############################
+###   MANAGED BY SUIL    ###
+############################
+Port {{ port }}
+{% for address in listen_addresses %}
+ListenAddress {{ address }}
+{% endfor %}
+AddressFamily any
+
+SyslogFacility AUTHPRIV
+LogLevel {{ log_level }}
+
+PermitRootLogin {{ permit_root_login }}
+PubkeyAuthentication {{ pubkey_authentication }}
+PasswordAuthentication {{ password_authentication }}
+PermitEmptyPasswords {{ permit_empty_passwords }}
+HostbasedAuthentication no
+IgnoreRhosts yes
+GSSAPIAuthentication no
+{# Renamed to KbdInteractiveAuthentication in OpenSSH 8.7; the old spelling is
+   still accepted and both targets understand it. #}
+ChallengeResponseAuthentication no
+UsePAM {{ use_pam }}
+StrictModes yes
+MaxAuthTries {{ max_auth_tries }}
+LoginGraceTime {{ login_grace_time }}
+{% if allow_users %}
+AllowUsers {{ allow_users | join(' ') }}
+{% endif %}
+{% if allow_groups %}
+AllowGroups {{ allow_groups | join(' ') }}
+{% endif %}
+
+AllowTcpForwarding {{ tcp_forwarding }}
+X11Forwarding {{ x11_forwarding }}
+TCPKeepAlive yes
+ClientAliveInterval {{ client_alive_interval }}
+ClientAliveCountMax {{ client_alive_count_max }}
+
+PrintMotd {{ print_motd }}
+PrintLastLog yes
+
+{% for env in accept_env %}
+AcceptEnv {{ env }}
+{% endfor %}
+
+Subsystem sftp {{ sftp_server }}
+{% if include %}
+
+{# Last on purpose. sshd keeps the FIRST value it obtains for a directive, so
+   an Include at the top - which is where the stock EL config puts it - lets
+   /etc/ssh/sshd_config.d/50-redhat.conf quietly put GSSAPIAuthentication and
+   X11Forwarding back to yes. #}
+Include {{ include }}
+{% endif %}

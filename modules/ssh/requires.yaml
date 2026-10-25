@@ -1,0 +1,5 @@
+---
+# Not only positional: the lockout guard reads the authorized_keys of the
+# connecting account, which the accounts module is what puts there.
+requires:
+  - accounts

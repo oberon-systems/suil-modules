@@ -1,0 +1,7 @@
+---
+ssh:
+  service:     sshd
+  binary:      /usr/sbin/sshd
+  sftp_server: /usr/libexec/openssh/sftp-server
+  # pam_motd already prints it, and leaving both on prints the banner twice.
+  print_motd:  "no"

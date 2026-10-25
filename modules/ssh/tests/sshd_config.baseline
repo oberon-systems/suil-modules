@@ -1,0 +1,24 @@
+AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE
+AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+AcceptEnv XMODIFIERS
+ChallengeResponseAuthentication no
+GSSAPIAuthentication no
+HostbasedAuthentication no
+RhostsRSAAuthentication no
+PubkeyAuthentication yes
+PasswordAuthentication no
+RSAAuthentication yes
+IgnoreRhosts yes
+PermitEmptyPasswords no
+PermitRootLogin no
+LogLevel INFO
+Port 22
+PrintLastLog yes
+PrintMotd yes
+Protocol 2
+StrictModes yes
+Subsystem sftp /usr/libexec/openssh/sftp-server
+SyslogFacility AUTHPRIV
+TCPKeepAlive yes
+UsePAM no
