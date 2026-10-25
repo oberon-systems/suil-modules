@@ -1,0 +1,55 @@
+# Managed by suil, module `nginx`.
+user {{ config.user }};
+worker_processes auto;
+
+error_log {{ config.log_dir }}/error.log notice;
+pid {{ config.pid_file }};
+
+events {
+    worker_connections {{ config.worker_connections }};
+}
+
+http {
+    include {{ config.config_dir }}/mime.types;
+    default_type application/octet-stream;
+    server_tokens off;
+
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+    access_log {{ config.log_dir }}/access.log main;
+
+    # modern configuration
+    ssl_protocols TLSv1.3;
+    ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1:secp384r1;
+    ssl_prefer_server_ciphers off;
+
+    # uncomment to enable if ssl_protocols includes TLSv1.2 or earlier;
+    # see also ssl_session_ticket_key alternative to stateful session cache
+    #ssl_session_timeout 1d;
+    #ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
+
+    # OCSP stapling
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate {{ config.ca_bundle }};
+
+    # async 'resolver' is important for proper operation of OCSP stapling
+    resolver {{ config.resolver }};
+{% if config.settings %}
+
+{% for key, value in config.settings | dictsort %}
+{% for item in (value if value is iterable and value is not string else [value]) %}
+    {{ key }} {{ item }};
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+{% if inline is none %}
+    include {{ config.confd_dir }}/*.conf;
+{% else %}
+{{ inline }}
+{% endif %}
+}

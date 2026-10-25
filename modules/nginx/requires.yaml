@@ -1,0 +1,5 @@
+---
+# Not positional: nginx is pinned out of the nginx.org repository that module
+# declares.
+requires:
+  - repos

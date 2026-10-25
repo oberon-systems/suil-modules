@@ -4,6 +4,7 @@ repos:
       - accounts
       - hostname
       - nftables
+      - nginx
       - packages
       - repos
       - selinux

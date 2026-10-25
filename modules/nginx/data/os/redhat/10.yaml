@@ -1,0 +1,14 @@
+---
+nginx:
+  package:    nginx
+  service:    nginx
+  binary:     /usr/sbin/nginx
+  # The account the nginx.org package creates and runs its workers as.
+  user:       nginx
+  config_dir: /etc/nginx
+  confd_dir:  /etc/nginx/conf.d
+  cert_dir:   /etc/nginx/cert
+  log_dir:    /var/log/nginx
+  pid_file:   /run/nginx.pid
+  # ca-certificates is in @core, so ssl_trusted_certificate always has a file.
+  ca_bundle:  /etc/pki/tls/certs/ca-bundle.crt

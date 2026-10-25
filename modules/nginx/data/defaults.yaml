@@ -1,0 +1,18 @@
+---
+# Bottom layer: nginx with only the default server. Every named server is site
+# data.
+nginx:
+  ensure:         present
+  manage_service: true
+
+  # conf.d belongs to the module: a *.conf no layer declares is removed.
+  purge: true
+
+  worker_connections: 1024
+  ssl_key_length:     2048
+
+  # Where OCSP stapling looks up responders: a caching resolver on loopback.
+  resolver: 127.0.0.1
+
+  settings: {}
+  servers:  {}
