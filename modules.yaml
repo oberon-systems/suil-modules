@@ -4,6 +4,7 @@ repos:
       - accounts
       - amneziawg
       - awg-keeper
+      - base
       - docker
       - hostname
       - nftables

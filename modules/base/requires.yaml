@@ -1,0 +1,11 @@
+---
+# A meta module: no code, no data, no facts of its own. The order of this list
+# is the order of the run, which is what keeps nftables last.
+requires:
+  - hostname
+  - selinux
+  - repos
+  - packages
+  - ssh
+  - accounts
+  - nftables
