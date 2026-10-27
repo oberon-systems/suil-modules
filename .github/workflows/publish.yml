@@ -31,7 +31,7 @@ jobs:
         uses: oberon-systems/droch-shuil/publish@v0.7.3
 
       - name: Upload to the release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: modules
           name: Modules
