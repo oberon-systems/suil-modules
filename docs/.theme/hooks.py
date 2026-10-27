@@ -21,6 +21,13 @@ def page(config: MkDocsConfig, uri: str, readme: Path, title: str) -> File:
     return file
 
 
+def on_config(config: MkDocsConfig) -> MkDocsConfig:
+    # A flat nav, as droch-shuil's: a modules/ section would render as a caption.
+    names = [readme.parent.name for readme in sorted(ROOT.glob("modules/*/README.md"))]
+    config["nav"] = [{"Home": "index.md"}] + [{name: f"modules/{name}.md"} for name in names]
+    return config
+
+
 def on_files(files: Files, config: MkDocsConfig) -> Files:
     files.append(page(config, "index.md", ROOT / "README.md", "Home"))
 
