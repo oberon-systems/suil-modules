@@ -1,6 +1,6 @@
-commitizen==4.19.1
+commitizen==4.19.3
 droch-shuil==0.7.3
 mkdocs==1.6.1
-pre-commit==4.6.2
+pre-commit==4.7.0
 pytest==9.1.1
 wyld-cz==0.4.1
