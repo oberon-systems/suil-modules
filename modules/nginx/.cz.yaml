@@ -16,6 +16,8 @@ commitizen:
   - '*-$version'
   major_version_zero: true
   name: wyld_cz
+  pre_bump_hooks:
+  - cd ../.. && .venv/bin/suil index "$CZ_PRE_NEW_TAG_VERSION" && git add index.yaml
   tag_format: nginx-$version
   update_changelog_on_bump: true
   version: 0.1.0
