@@ -232,6 +232,18 @@ def test_the_dropin_restores_the_address_and_the_mtu(load, suil_context):
     assert '[Peer]' not in main.render(entry, 'awg-test')
 
 
+def test_the_config_dir_keeps_its_acl_while_the_agent_owns_an_interface(load, suil_context):
+    main = load('amneziawg')
+    owned = config(load, suil_context, interfaces={'awg-test': interface()})
+    shared = config(load, suil_context,
+                    interfaces={'awg-test': interface(),
+                                'awg-agent': interface(address='10.98.0.1/24', listen_port=51821,
+                                                       peers={}, peers_external=True)})
+
+    assert main._directory_owner(owned) == {'user': 'root', 'group': 'root', 'mode': '700'}
+    assert main._directory_owner(shared) == {}
+
+
 def test_a_pin_reaches_dnf_as_a_versioned_name(load, suil_context):
     main = load('amneziawg')
     entry = config(load, suil_context, packages={**PACKAGES, 'amneziawg-dkms': {'ensure': 'absent'},

@@ -107,9 +107,7 @@ class Amneziawg(Module[Config]):
             files.directory(
                 name=f'Ensure {self.config.config_dir} exists',
                 path=self.config.config_dir,
-                user='root',
-                group='root',
-                mode='700',
+                **_directory_owner(self.config),
             )
 
         for name, interface in sorted(self.config.interfaces.items()):
@@ -248,6 +246,15 @@ def _wanted(config: Config, absent: bool) -> list[str]:
         names.append(name if package.ensure in ('present', 'absent') else f'{name}-{package.ensure}')
 
     return names
+
+
+def _directory_owner(config: Config) -> dict:
+    """A chmod empties the ACL mask the agent writes through, so its directory is only ensured."""
+    if any(interface.ensure == 'present' and interface.peers_external
+           for interface in config.interfaces.values()):
+        return {}
+
+    return {'user': 'root', 'group': 'root', 'mode': '700'}
 
 
 def _stale(config: Config, reported: dict) -> bool:
