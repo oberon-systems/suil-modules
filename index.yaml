@@ -4,6 +4,9 @@ modules:
     url: accounts-0.1.0.tar.gz
     sha256: ad812549052a55fe76284afb41cf47ca23100ef14d9a87cafe106b3da7110e9d
   amneziawg:
+  - version: 0.1.1
+    url: amneziawg-0.1.1.tar.gz
+    sha256: a523ba07de3b2edd9d3295fc835146212824d2e2c3ea82b46c5ab11c8806ea85
   - version: 0.1.0
     url: amneziawg-0.1.0.tar.gz
     sha256: 19133d08eff2bed53837335e383a79fe9c5981820bd8a2f72f77bfaa8abebc75
