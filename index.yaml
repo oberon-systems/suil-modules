@@ -22,6 +22,9 @@ modules:
     url: base-0.1.0.tar.gz
     sha256: 6aace6aeba409c7954dafaa8b6d16a8e5bfebb85087b51716858877f92a94506
   docker:
+  - version: 0.2.0
+    url: docker-0.2.0.tar.gz
+    sha256: e78f96199bf785ca1e3814a688f9d504d1eb177c898a45697da60882959b9986
   - version: 0.1.0
     url: docker-0.1.0.tar.gz
     sha256: 8a1a7de168acc489379069666ed4fee5fd9b8e37c8d1acf8d0f509fb5525cecf

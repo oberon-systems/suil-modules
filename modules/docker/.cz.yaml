@@ -20,6 +20,6 @@ commitizen:
   - cd ../.. && .venv/bin/suil index "$CZ_PRE_NEW_TAG_VERSION" && git add index.yaml
   tag_format: docker-$version
   update_changelog_on_bump: true
-  version: 0.1.0
+  version: 0.2.0
   version_provider: commitizen
   version_scheme: semver
