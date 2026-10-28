@@ -8,6 +8,9 @@ modules:
     url: amneziawg-0.1.0.tar.gz
     sha256: 19133d08eff2bed53837335e383a79fe9c5981820bd8a2f72f77bfaa8abebc75
   awg-keeper:
+  - version: 0.1.1
+    url: awg-keeper-0.1.1.tar.gz
+    sha256: f12e4c10fc8b5b65aa8551913d91ff4b2b50248477e31e58458bb1d549fb3cd2
   - version: 0.1.0
     url: awg-keeper-0.1.0.tar.gz
     sha256: 5c4e2985b5d57e02ce2c2da93706b40505195e35dccf26e00dca04b693981d60
