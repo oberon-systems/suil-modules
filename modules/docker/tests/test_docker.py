@@ -1,3 +1,5 @@
+import importlib.util
+import os
 import re
 import shlex
 
@@ -201,6 +203,48 @@ def test_expected_names_every_entry_it_manages(load, suil_context):
     assert reported['unmanaged'] == {'containers': [], 'stacks': []}
     assert reported['legacy'] == []
     assert main.Docker(config(load, suil_context, ensure='absent')).expected() == {'packages': {'docker-ce': 'absent'}}
+
+
+def test_a_stack_directory_stays_below_the_stack_or_is_absolute(load, suil_context):
+    for path in ('.', '../other', 'db/../../etc', '/'):
+        with pytest.raises(ValueError, match='directories'):
+            config(load, suil_context, compose={'stacks': {'app': {'content': STACK, 'directories': {path: {}}}}})
+
+    with pytest.raises(ValueError, match='octal'):
+        config(load, suil_context,
+               compose={'stacks': {'app': {'content': STACK, 'directories': {'db': {'mode': '0789'}}}}})
+
+
+def test_expected_names_each_stack_directory_by_its_host_path(load, suil_context):
+    main = load('docker')
+    entry = config(load, suil_context, compose={'stacks': {
+        'app': {'content': STACK, 'directories': {'db': {'owner': 10001, 'group': 10001, 'mode': 750},
+                                                  '/srv/app': {'mode': '0700'}}},
+        'old': {'ensure': 'absent', 'directories': {'db': {}}}}})
+    stacks = main.Docker(entry).expected()['stacks']
+
+    assert stacks['app']['directories'] == {
+        '/opt/app/db': {'owner': 10001, 'group': 10001, 'mode': '750'},
+        '/srv/app':    {'owner': 'app', 'group': 'app', 'mode': '700'},
+    }
+    assert 'directories' not in stacks['old']
+    assert main.Docker(config(load, suil_context, compose={'stacks': {'web': {'content': STACK}}})).expected()[
+        'stacks']['web']['directories'] == {}
+
+
+def test_the_collector_reports_a_directory_the_way_the_config_names_its_owner(tmp_path):
+    spec = importlib.util.spec_from_file_location('docker_collector', MODULES_DIR / 'docker' / 'facts' / 'collector.py')
+    collector = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(collector)
+    (tmp_path / 'app' / 'db').mkdir(parents=True, mode=0o750)
+    (tmp_path / 'app' / 'db').chmod(0o750)
+    uid, gid = os.getuid(), os.getgid()
+
+    found = collector.directories(str(tmp_path), 'app', {
+        'db': {'owner': uid, 'group': str(gid)}, 'gone': {}})
+
+    assert found[f'{tmp_path}/app/db'] == {'owner': uid, 'group': str(gid), 'mode': '750'}
+    assert found[f'{tmp_path}/app/gone'] is None
 
 
 def test_docker_brings_its_forward_rules_to_nftables(load, suil_context):

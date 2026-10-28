@@ -139,6 +139,14 @@ def container_files(config: Config, name: str, entry) -> dict:
     }
 
 
+def stack_directories(config: Config, name: str, entry) -> dict:
+    """Each declared directory by its host path, owned by the stack's account unless it names another."""
+    return {config.stack_directory(name, path): {'owner': name if item.owner is None else item.owner,
+                                                 'group': name if item.group is None else item.group,
+                                                 'mode':  item.mode}
+            for path, item in entry.directories.items()}
+
+
 def stack_files(config: Config, name: str, entry) -> dict:
     return {
         config.compose_file(name):                   compose_text(entry),
@@ -296,7 +304,7 @@ class Docker(Module[Config]):
             'service':       _state(self.config.manage_service),
             'containers':    {name: _expected_entry(self.config, entry)
                               for name, entry in self.config.containers.items()},
-            'stacks':        {name: _expected_entry(self.config, entry)
+            'stacks':        {name: _expected_stack(self.config, name, entry)
                               for name, entry in self.config.compose.stacks.items()},
             'unmanaged':     {'containers': [], 'stacks': []} if self.config.purge else None,
             'legacy':        [],
@@ -363,6 +371,12 @@ class Docker(Module[Config]):
 
             _home(self.config, name, force or not current.get('present'))
 
+            # Before compose up: docker creates a missing bind mount source as root.
+            for path, item in stack_directories(self.config, name, entry).items():
+                if force or self.diff_touches(scope, 'stacks', name, 'directories', path):
+                    files.directory(name=f'Ensure {path} exists', path=path, user=str(item['owner']),
+                                    group=str(item['group']), mode=item['mode'])
+
             changed = self._put(self.config.compose_file(name), wanted[self.config.compose_file(name)],
                                 f'Write the compose file of stack {name}', '600', facts, force, owner=name)
 
@@ -423,6 +437,15 @@ def _expected_entry(config: Config, entry) -> dict:
         return {'present': False, 'service': _state(False)}
 
     return {'present': True, 'service': _state(config.manage_service)}
+
+
+def _expected_stack(config: Config, name: str, entry) -> dict:
+    expected = _expected_entry(config, entry)
+
+    if entry.ensure != 'absent':
+        expected['directories'] = stack_directories(config, name, entry)
+
+    return expected
 
 
 def _state(on: bool) -> dict:

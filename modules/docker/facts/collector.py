@@ -5,8 +5,11 @@ The digests of daemon.json, the units and every entry's files are recorded by
 the runner from files(). The docker client is never called: a wedged
 daemon would hang the collector."""
 
+import grp
 import os
+import pwd
 import re
+import stat
 
 from suil.sdk import Facter
 
@@ -63,6 +66,43 @@ def enabled(template):
             if name.startswith(prefix) and name.endswith('.service')}
 
 
+def account(number, declared, lookup):
+    """An owner or group told the way the config names it: a uid, a numeric string or a name."""
+    if isinstance(declared, int):
+        return number
+
+    if str(declared).isdigit():
+        return str(number)
+
+    try:
+        return lookup(number)[0]
+    except KeyError:
+        return str(number)
+
+
+def directories(base, name, declared):
+    found = {}
+
+    for path, item in (declared or {}).items():
+        item = item or {}
+        full = os.path.normpath(os.path.join(base, name, path))
+
+        try:
+            info = os.stat(full)
+        except OSError:
+            info = None
+
+        if info is None or not stat.S_ISDIR(info.st_mode):
+            found[full] = None
+            continue
+
+        found[full] = {'owner': account(info.st_uid, item.get('owner', name), pwd.getpwuid),
+                       'group': account(info.st_gid, item.get('group', name), grp.getgrgid),
+                       'mode':  '{:o}'.format(stat.S_IMODE(info.st_mode)).rjust(3, '0')}
+
+    return found
+
+
 def legacy():
     return sorted(os.path.join(base, name) for base in LEGACY if os.path.isdir(base)
                   for name in os.listdir(base) if os.path.isdir(os.path.join(base, name)))
@@ -86,6 +126,12 @@ class DockerFacter(Facter):
         def entry(name, unit):
             return {'present': os.path.isdir(os.path.join(base, name)), 'service': state(unit.format(name))}
 
+        def stack(name):
+            reported = entry(name, 'docker-compose@{}.service')
+            reported['directories'] = directories(base, name, (stacks[name] or {}).get('directories'))
+
+            return reported
+
         unmanaged = None
 
         if self.config.get('purge', True):
@@ -104,7 +150,7 @@ class DockerFacter(Facter):
             'ip_forward':    read('/proc/sys/net/ipv4/ip_forward') == '1',
             'service':       state(self.config.get('service') or 'docker'),
             'containers':    {name: entry(name, 'docker-container@{}.service') for name in containers},
-            'stacks':        {name: entry(name, 'docker-compose@{}.service') for name in stacks},
+            'stacks':        {name: stack(name) for name in stacks},
             'unmanaged':     unmanaged,
             'legacy':        legacy(),
         }

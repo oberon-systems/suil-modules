@@ -1,3 +1,4 @@
+import posixpath
 import re
 import shlex
 
@@ -13,6 +14,7 @@ VERSION = re.compile(r'^[A-Za-z0-9][A-Za-z0-9._+:~-]*$')
 NAME = re.compile(r'^[a-z][a-z0-9_-]{0,31}$')
 OPTION = re.compile(r'^[a-z][a-z0-9-]*$')
 ENV_KEY = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
+MODE = re.compile(r'^[0-7]{3,4}$')
 
 # An entry name becomes a system account, and these are already somebody's.
 RESERVED = ('root', 'docker', 'nobody')
@@ -106,6 +108,26 @@ class Container(BaseModel):
         return self
 
 
+class Directory(BaseModel):
+
+    model_config = ConfigDict(extra='forbid')
+
+    owner: str | int | None = None
+    group: str | int | None = None
+    mode:  str = '750'
+
+    @field_validator('mode', mode='before')
+    @classmethod
+    def check_mode(cls, value) -> str:
+        # yaml reads an unquoted 750 as an int; its digits are still the octal mode.
+        mode = str(value).lstrip('0').rjust(3, '0')
+
+        if not MODE.match(mode):
+            raise ValueError(f'mode is an octal mode such as 750, not {value!r}')
+
+        return mode
+
+
 class Stack(BaseModel):
 
     model_config = ConfigDict(extra='forbid')
@@ -115,6 +137,7 @@ class Stack(BaseModel):
     recreate:    bool = False
     content:     str | None = None
     unit_dropin: str | None = None
+    directories: dict[str, Directory] = {}
 
     @field_validator('ensure')
     @classmethod
@@ -125,6 +148,15 @@ class Stack(BaseModel):
     @classmethod
     def check_env(cls, value: dict) -> dict:
         return check_env(value)
+
+    @field_validator('directories')
+    @classmethod
+    def check_directories(cls, value: dict) -> dict:
+        for path in value:
+            if posixpath.normpath(path) in ('.', '/') or '..' in path.split('/'):
+                raise ValueError(f'directories holds {path!r}; name a directory below the stack or an absolute one')
+
+        return value
 
     @model_validator(mode='after')
     def check_content(self) -> 'Stack':
@@ -231,6 +263,10 @@ class Config(Base):
 
     def compose_file(self, name: str) -> str:
         return f'{self.entry_dir(name)}/docker-compose.yml'
+
+    def stack_directory(self, name: str, path: str) -> str:
+        """A relative path is the stack's own, beside its compose file, as ./<path> is in it."""
+        return posixpath.normpath(posixpath.join(self.entry_dir(name), path))
 
     def dropin_file(self, unit: str) -> str:
         return f'{self.unit_dir}/{unit}.d/override.conf'

@@ -118,10 +118,40 @@ holds `docker-compose.yml` from `content` and `.env` from `env`, both mode
 | `env` | `{}` | `.env`, sorted, values single-quoted so compose does not interpolate them |
 | `recreate` | `false` | On a change: `false` reloads, `true` restarts |
 | `unit_dropin` | none | See [Overriding a unit](#overriding-a-unit) |
+| `directories` | `{}` | `<path>: {owner, group, mode}`, see [Stack data](#stack-data) |
 
 Start and reload are both `compose up -d --remove-orphans`, which recreates
 only the services whose definition changed. A restart is `compose down` and
 then `compose up`, so every container and the stack's network are rebuilt.
+
+### Stack data
+
+Keep a stack's data in a bind mount next to its compose file, not in a named
+volume. A named volume lives under `/var/lib/docker/volumes`, is tied to the
+compose project name and goes with `docker compose down -v`. A missing bind
+mount source is created by docker as `root:root`, which a container running
+as a fixed non-root uid cannot write, so declare the directory:
+
+```yaml
+docker:
+  compose:
+    stacks:
+      awg-keeper:
+        directories:
+          db: {owner: 10001, group: 10001, mode: '750'}
+        content: |
+          services:
+            panel:
+              volumes:
+                - ./db:/var/lib/awg-keeper
+```
+
+A relative path is below `/opt/<name>`, as `./<path>` is in the document; an
+absolute one is taken as it is. `owner` and `group` default to the stack's
+account, `mode` to `750`. Each directory is created before `compose up`, and
+the collector reports its owner, group and mode, so drift is set back on the
+next run. Moving from a named volume, copy its `_data` into the new directory
+before the run that switches the mount.
 
 ## Overriding a unit
 
