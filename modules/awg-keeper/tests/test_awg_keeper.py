@@ -88,11 +88,11 @@ def test_expected_names_the_package_the_files_and_the_service(load, suil_context
 
 
 def test_the_agent_runs_after_the_modules_whose_paths_it_mounts(modules):
-    order = get_order(['client-vpn'], modules)
+    order = get_order(['awg-keeper'], modules)
 
     assert order.index('amneziawg') < order.index('awg-keeper')
     assert order.index('xray') < order.index('awg-keeper')
-    assert order[-1] == 'client-vpn'
+    assert order[-1] == 'awg-keeper'
 
 
 def test_the_default_xray_api_is_the_xray_modules_api_inbound(load, suil_context):
