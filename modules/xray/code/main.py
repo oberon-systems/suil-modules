@@ -171,7 +171,8 @@ class Xray(Module[Config]):
         if members is not None:
             check_config(members[BINARY], content)
         else:
-            self.validate_file(host, content, f'{self.config.binary} run -test -format json -c %s')
+            # Xray 26.10 picks a file's loader by its extension and the staged file has none; stdin honours -format.
+            self.validate_file(host, content, f'{self.config.binary} run -test -format json -c stdin: < %s')
 
         staged = f'{self.config.config_file}.suil'
 
