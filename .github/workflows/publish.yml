@@ -38,3 +38,13 @@ jobs:
           body: Module archives and index.yaml, the source suil installs from.
           make_latest: false
           files: ${{ github.ref_type == 'tag' && 'dist/*' || 'index.yaml' }}
+
+      - name: Drop the archives index.yaml no longer lists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          listed=$(grep -oE '[^ ]+\.tar\.gz' index.yaml)
+          gh release view modules --json assets --jq '.assets[].name' | grep '\.tar\.gz$' |
+            while read -r name; do
+              grep -qxF "$name" <<<"$listed" || gh release delete-asset modules "$name" --yes
+            done

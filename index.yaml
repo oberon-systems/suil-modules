@@ -7,16 +7,10 @@ modules:
   - version: 0.1.1
     url: amneziawg-0.1.1.tar.gz
     sha256: a523ba07de3b2edd9d3295fc835146212824d2e2c3ea82b46c5ab11c8806ea85
-  - version: 0.1.0
-    url: amneziawg-0.1.0.tar.gz
-    sha256: 19133d08eff2bed53837335e383a79fe9c5981820bd8a2f72f77bfaa8abebc75
   awg-keeper:
   - version: 0.1.1
     url: awg-keeper-0.1.1.tar.gz
     sha256: f12e4c10fc8b5b65aa8551913d91ff4b2b50248477e31e58458bb1d549fb3cd2
-  - version: 0.1.0
-    url: awg-keeper-0.1.0.tar.gz
-    sha256: 5c4e2985b5d57e02ce2c2da93706b40505195e35dccf26e00dca04b693981d60
   base:
   - version: 0.1.0
     url: base-0.1.0.tar.gz
@@ -25,9 +19,6 @@ modules:
   - version: 0.2.0
     url: docker-0.2.0.tar.gz
     sha256: e78f96199bf785ca1e3814a688f9d504d1eb177c898a45697da60882959b9986
-  - version: 0.1.0
-    url: docker-0.1.0.tar.gz
-    sha256: 8a1a7de168acc489379069666ed4fee5fd9b8e37c8d1acf8d0f509fb5525cecf
   hostname:
   - version: 0.1.0
     url: hostname-0.1.0.tar.gz
@@ -64,6 +55,3 @@ modules:
   - version: 0.1.1
     url: xray-0.1.1.tar.gz
     sha256: c74e3411ffc14d07d3825f5f9b51bf7b903a15030fdc39f5a79b3817ac3cd607
-  - version: 0.1.0
-    url: xray-0.1.0.tar.gz
-    sha256: 5bfc7a68fc411199514b92cdd772da082c673f03c9382253548fe6147155eff7
