@@ -1,4 +1,4 @@
-commitizen==4.19.3
+commitizen==4.19.4
 droch-shuil==0.8.0
 mkdocs==1.6.1
 pre-commit==4.7.0
